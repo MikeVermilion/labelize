@@ -1,0 +1,87 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Build (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact: labelize-x86_64-unknown-linux-gnu.tar.gz
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            artifact: labelize-aarch64-apple-darwin.tar.gz
+          - os: macos-13
+            target: x86_64-apple-darwin
+            artifact: labelize-x86_64-apple-darwin.tar.gz
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build --release --target ${{ matrix.target }}
+      - name: Package
+        run: |
+          cd target/${{ matrix.target }}/release
+          tar czf ../../../${{ matrix.artifact }} labelize
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.artifact }}
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: artifacts/**/*.tar.gz
+
+  homebrew:
+    name: Update Homebrew Tap
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Compute SHA256 sums
+        id: sha
+        run: |
+          echo "linux_x64=$(sha256sum artifacts/labelize-x86_64-unknown-linux-gnu.tar.gz/labelize-x86_64-unknown-linux-gnu.tar.gz | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          echo "mac_arm64=$(sha256sum artifacts/labelize-aarch64-apple-darwin.tar.gz/labelize-aarch64-apple-darwin.tar.gz | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          echo "mac_x64=$(sha256sum artifacts/labelize-x86_64-apple-darwin.tar.gz/labelize-x86_64-apple-darwin.tar.gz | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+      - name: Update Homebrew tap
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          repository: GOODBOY008/homebrew-labelize
+          event-type: update-formula
+          client-payload: |
+            {
+              "version": "${{ github.ref_name }}",
+              "linux_x64_sha256": "${{ steps.sha.outputs.linux_x64 }}",
+              "mac_arm64_sha256": "${{ steps.sha.outputs.mac_arm64 }}",
+              "mac_x64_sha256": "${{ steps.sha.outputs.mac_x64 }}"
+            }
