@@ -15,6 +15,10 @@ thiserror = "2"
 lopdf = "0.34"
 flate2 = "1"
 base64 = "0.22"
+datamatrix = "0.3"
+pdf417 = { path = "vendor/pdf417" }
+qrcode = "0.14"
+rxing = { version = "0.8", default-features = false, features = ["encoding_rs"] }
 regex = "1"
 serde = { version = "1", features = ["derive"] }
 

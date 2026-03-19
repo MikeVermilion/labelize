@@ -472,6 +472,7 @@ impl Renderer {
         let img = barcodes::pdf417::encode(
             &bc.data,
             bc.barcode.row_height,
+            bc.barcode.security,
             bc.barcode.columns,
             bc.barcode.rows,
             bc.barcode.truncate,
@@ -511,16 +512,10 @@ impl Renderer {
         bc: &crate::elements::barcode_qr::BarcodeQrWithData,
         _options: &DrawerOptions,
     ) -> Result<(), String> {
-        let (input_data, _ec, _) = bc.get_input_data()?;
-        let img = barcodes::qrcode::encode(&input_data, bc.barcode.magnification)?;
+        let (input_data, ec, _) = bc.get_input_data()?;
+        let img = barcodes::qrcode::encode(&input_data, bc.barcode.magnification, ec)?;
 
-        let mut pos = bc.position.clone();
-        if !pos.calculate_from_bottom {
-            pos.y += bc.height;
-        } else {
-            let ft_offset = bc.barcode.magnification * 7;
-            pos.y = (pos.y - img.height() as i32).max(0) - ft_offset;
-        }
+        let pos = adjust_image_typeset_position(&img, &bc.position, FieldOrientation::Normal);
 
         overlay_at(canvas, &img, pos.x, pos.y);
         Ok(())

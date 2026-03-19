@@ -200,7 +200,7 @@ fn print_width_smaller_than_label_width() {
     let zpl = "^XA^PW400^FO10,10^GB380,50,3^FS^XZ";
     let png = render_helpers::render_zpl_to_png(zpl, default_options());
     let img = decode_png(&png);
-    // Image should still be full label width
-    let expected_w = (102.0 * 8.0_f64).ceil() as u32;
+    // Image should still be full label width (101.625mm × 8 dpmm = 813px)
+    let expected_w = (101.625 * 8.0_f64).ceil() as u32;
     assert_eq!(img.width(), expected_w);
 }

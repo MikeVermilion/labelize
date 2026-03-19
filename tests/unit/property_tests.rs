@@ -67,7 +67,7 @@ proptest! {
 
     #[test]
     fn qr_produces_square(input in proptest_strategies::arb_qr_input()) {
-        let result = labelize::barcodes::qrcode::encode(&input, 5);
+        let result = labelize::barcodes::qrcode::encode(&input, 5, labelize::elements::barcode_qr::QrErrorCorrectionLevel::M);
         if let Ok(img) = result {
             prop_assert_eq!(img.width(), img.height());
         }

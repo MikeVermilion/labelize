@@ -1,4 +1,5 @@
 use labelize::barcodes::{code128, code39, ean13, twooffive, pdf417, aztec, datamatrix, qrcode, maxicode};
+use labelize::elements::barcode_qr::QrErrorCorrectionLevel;
 
 // --- Code128 ---
 
@@ -70,14 +71,14 @@ fn twooffive_empty_input_returns_error() {
 
 #[test]
 fn pdf417_encodes_text() {
-    let img = pdf417::encode("Hello World", 4, 0, 0, false).expect("pdf417 failed");
+    let img = pdf417::encode("Hello World", 4, 0, 0, 0, false).expect("pdf417 failed");
     assert!(img.width() > 0);
     assert!(img.height() > 0);
 }
 
 #[test]
 fn pdf417_empty_input_returns_error() {
-    let result = pdf417::encode("", 4, 0, 0, false);
+    let result = pdf417::encode("", 4, 0, 0, 0, false);
     assert!(result.is_err(), "expected error for empty input");
 }
 
@@ -117,7 +118,7 @@ fn datamatrix_empty_input_returns_error() {
 
 #[test]
 fn qrcode_encodes_text() {
-    let img = qrcode::encode("Hello World", 5).expect("qrcode failed");
+    let img = qrcode::encode("Hello World", 5, QrErrorCorrectionLevel::M).expect("qrcode failed");
     assert!(img.width() > 0);
     assert!(img.height() > 0);
     // QR codes should be square
@@ -126,7 +127,7 @@ fn qrcode_encodes_text() {
 
 #[test]
 fn qrcode_empty_input_returns_error() {
-    let result = qrcode::encode("", 5);
+    let result = qrcode::encode("", 5, QrErrorCorrectionLevel::M);
     assert!(result.is_err(), "expected error for empty input");
 }
 
