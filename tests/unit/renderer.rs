@@ -294,24 +294,24 @@ fn ft_baseline_positions_text_with_margin_from_top() {
 fn diagonal_line_thick_border_draws_triangle() {
     // ^GD115,120,120,B,L — thickness (120) >= min(115,120)=115 → filled diagonal
     // With dual-triangle drawing: primary (B=Black) fills one half, opposite (White) fills the other.
-    // L direction (top_to_bottom=false after parser fix) = "/" direction:
-    //   - Primary (Black): upper-left triangle (TL, TR, BL)
-    //   - Opposite (White): lower-right triangle (TR, BL, BR)
+    // L direction (top_to_bottom=true) = "\" direction (top-left to bottom-right):
+    //   - Primary (Black): upper-right triangle [TL, TR, BR]
+    //   - Opposite (White): lower-left triangle [TL, BL, BR]
     let zpl = "^XA^FO100,100^GD115,120,120,B,L^FS^XZ";
     let png = render_helpers::render_zpl_to_png(zpl, default_options());
     let img = decode_png(&png);
 
-    // Top-left corner should be black (inside the primary triangle)
-    let tl = img.get_pixel(100, 100);
-    assert!(tl[0] < 128, "top-left of triangle should be black, got {:?}", tl);
+    // Top-right corner should be black (inside the primary upper-right triangle)
+    let tr = img.get_pixel(210, 105);
+    assert!(tr[0] < 128, "top-right of triangle should be black, got {:?}", tr);
 
-    // Bottom-right corner should be white (inside the opposite triangle)
-    let br = img.get_pixel(214, 219);
-    assert!(br[0] > 128, "bottom-right should be white (opposite triangle), got {:?}", br);
+    // Bottom-left corner should be white (inside the opposite lower-left triangle)
+    let bl = img.get_pixel(105, 215);
+    assert!(bl[0] > 128, "bottom-left should be white (opposite triangle), got {:?}", bl);
 
-    // Upper-left region should be black
-    let upper_left = img.get_pixel(110, 110);
-    assert!(upper_left[0] < 128, "upper-left region should be black, got {:?}", upper_left);
+    // Upper-right region should be black
+    let upper_right = img.get_pixel(200, 110);
+    assert!(upper_right[0] < 128, "upper-right region should be black, got {:?}", upper_right);
 }
 
 // --- Issue #7: QR code should include quiet zone ---

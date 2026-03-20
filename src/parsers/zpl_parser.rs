@@ -680,21 +680,27 @@ impl ZplParser {
         let parts = split_command(command, "^GD");
         let mut gd = GraphicDiagonalLine {
             position: self.printer.next_element_position.clone(),
-            width: 1,
-            height: 1,
+            width: 3,
+            height: 3,
             border_thickness: 1,
             line_color: LineColor::Black,
-            top_to_bottom: true,
+            top_to_bottom: false,
             reverse_print: self.printer.get_reverse_print(),
         };
-        if let Some(v) = parts.first().and_then(|s| parse_int(s)) { gd.width = v; }
-        if let Some(v) = parts.get(1).and_then(|s| parse_int(s)) { gd.height = v; }
-        if let Some(v) = parts.get(2).and_then(|s| parse_int(s)) { gd.border_thickness = v; }
+        // Parse thickness first — w and h default to max(t, 3) per spec
+        if let Some(v) = parts.get(2).and_then(|s| parse_int(s)) { gd.border_thickness = v.max(1); }
+        let default_wh = gd.border_thickness.max(3);
+        gd.width = default_wh;
+        gd.height = default_wh;
+        if let Some(v) = parts.first().and_then(|s| parse_int(s)) { gd.width = v.max(3); }
+        if let Some(v) = parts.get(1).and_then(|s| parse_int(s)) { gd.height = v.max(3); }
         if parts.get(3).map_or(false, |s| *s == "W") {
             gd.line_color = LineColor::White;
         }
-        if parts.get(4).map_or(false, |s| *s == "L") {
-            gd.top_to_bottom = false;
+        // R (default) = right-leaning / = top_to_bottom false
+        // L = left-leaning \ = top_to_bottom true
+        if parts.get(4).map_or(false, |s| *s == "L" || *s == "\\") {
+            gd.top_to_bottom = true;
         }
         Ok(Some(LabelElement::DiagonalLine(gd)))
     }

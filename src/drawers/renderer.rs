@@ -312,25 +312,25 @@ impl Renderer {
                 LineColor::Black => Rgba([255, 255, 255, 255]),
             };
             let (primary_poly, opposite_poly) = if dl.top_to_bottom {
-                // "R" direction (\): top-left to bottom-right
-                // Primary (specified color): lower-left triangle
-                // Opposite: upper-right triangle
+                // "L" direction (\): top-left to bottom-right
+                // Primary (specified color): upper-right triangle (above the diagonal)
+                // Opposite: lower-left triangle (below the diagonal)
                 (
-                    [
-                        imageproc::point::Point::new(x as i32, y as i32),
-                        imageproc::point::Point::new(x as i32, (y + h) as i32),
-                        imageproc::point::Point::new((x + w) as i32, (y + h) as i32),
-                    ],
                     [
                         imageproc::point::Point::new(x as i32, y as i32),
                         imageproc::point::Point::new((x + w) as i32, y as i32),
                         imageproc::point::Point::new((x + w) as i32, (y + h) as i32),
                     ],
+                    [
+                        imageproc::point::Point::new(x as i32, y as i32),
+                        imageproc::point::Point::new(x as i32, (y + h) as i32),
+                        imageproc::point::Point::new((x + w) as i32, (y + h) as i32),
+                    ],
                 )
             } else {
-                // "L" direction (/): bottom-left to top-right
-                // Primary (specified color): upper-left triangle
-                // Opposite: lower-right triangle
+                // "R" direction (/): bottom-left to top-right
+                // Primary (specified color): upper-left triangle (above the diagonal)
+                // Opposite: lower-right triangle (below the diagonal)
                 (
                     [
                         imageproc::point::Point::new(x as i32, y as i32),

@@ -90,3 +90,39 @@ fn labelary_mixed_label() {
         "mixed_label",
     );
 }
+
+#[test]
+#[ignore = "requires network access to Labelary API"]
+fn labelary_gd_thin_right() {
+    compare_against_labelary(
+        "^XA^FO50,50^GD200,200,5,B,R^FS^XZ",
+        "gd_thin_right",
+    );
+}
+
+#[test]
+#[ignore = "requires network access to Labelary API"]
+fn labelary_gd_thin_left() {
+    compare_against_labelary(
+        "^XA^FO50,50^GD200,200,5,B,L^FS^XZ",
+        "gd_thin_left",
+    );
+}
+
+#[test]
+#[ignore = "requires network access to Labelary API"]
+fn labelary_gd_thick_fill() {
+    compare_against_labelary(
+        "^XA^FO50,50^GD200,300,200,B,R^FS^FO300,50^GD200,300,200,B,L^FS^XZ",
+        "gd_thick_fill",
+    );
+}
+
+#[test]
+#[ignore = "requires network access to Labelary API"]
+fn labelary_gd_default_params() {
+    compare_against_labelary(
+        "^XA^FO50,50^GD300,400,10^FS^FO400,50^GD300,400,10,B,L^FS^XZ",
+        "gd_default_params",
+    );
+}

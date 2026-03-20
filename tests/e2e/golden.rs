@@ -118,6 +118,10 @@ fn golden_epl_with_tolerance(name: &str, tolerance: f64) {
 #[test] fn golden_ean13() { golden_zpl_with_tolerance("ean13", 3.0); }
 #[test] fn golden_encodings_013() { golden_zpl_with_tolerance("encodings_013", 5.0); }
 #[test] fn golden_fedex() { golden_zpl_with_tolerance("fedex", 20.0); }
+#[test] fn golden_gd_thin_r() { golden_zpl_with_tolerance("gd_thin_r", 3.0); }
+#[test] fn golden_gd_thin_l() { golden_zpl_with_tolerance("gd_thin_l", 3.0); }
+#[test] fn golden_gd_thick() { golden_zpl_with_tolerance("gd_thick", 10.0); }
+#[test] fn golden_gd_default_params() { golden_zpl_with_tolerance("gd_default_params", 3.0); }
 #[test] fn golden_gb_0_height() { golden_zpl_with_tolerance("gb_0_height", 1.0); }
 #[test] fn golden_gb_0_width() { golden_zpl_with_tolerance("gb_0_width", 1.0); }
 #[test] fn golden_gb_normal() { golden_zpl_with_tolerance("gb_normal", 1.0); }
