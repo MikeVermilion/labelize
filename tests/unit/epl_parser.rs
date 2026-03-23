@@ -184,8 +184,14 @@ fn parse_mixed_elements() {
     let labels = parse(epl);
     assert_eq!(labels[0].elements.len(), 4);
     assert!(matches!(&labels[0].elements[0], LabelElement::Text(_)));
-    assert!(matches!(&labels[0].elements[1], LabelElement::Barcode128(_)));
-    assert!(matches!(&labels[0].elements[2], LabelElement::GraphicBox(_)));
+    assert!(matches!(
+        &labels[0].elements[1],
+        LabelElement::Barcode128(_)
+    ));
+    assert!(matches!(
+        &labels[0].elements[2],
+        LabelElement::GraphicBox(_)
+    ));
     assert!(matches!(&labels[0].elements[3], LabelElement::Text(_)));
 }
 
@@ -199,7 +205,10 @@ fn parse_dpd_uk() {
 
     assert!(!labels.is_empty(), "no labels parsed from dpduk.epl");
     let label = &labels[0];
-    assert!(!label.elements.is_empty(), "no elements in the parsed label");
+    assert!(
+        !label.elements.is_empty(),
+        "no elements in the parsed label"
+    );
 
     let mut texts = 0;
     let mut barcodes = 0;
@@ -240,7 +249,8 @@ fn draw_dpd_uk() {
 
 #[test]
 fn parse_n_resets_reference_point() {
-    let labels = parse("N\nR40,10\nA10,20,0,1,1,1,N,\"First\"\nP1\nN\nA10,20,0,1,1,1,N,\"Second\"\nP1\n");
+    let labels =
+        parse("N\nR40,10\nA10,20,0,1,1,1,N,\"First\"\nP1\nN\nA10,20,0,1,1,1,N,\"Second\"\nP1\n");
     assert_eq!(labels.len(), 2);
 
     let tf1 = match &labels[0].elements[0] {
@@ -265,12 +275,12 @@ fn parse_n_resets_reference_point() {
 #[test]
 fn parse_font_sizes() {
     let tests = vec![
-        (1, 12.0, 12.0),  // 8x12, equal mult → Width == Height
-        (2, 16.0, 16.0),  // 10x16
-        (3, 20.0, 20.0),  // 12x20
-        (4, 24.0, 24.0),  // 14x24
-        (5, 48.0, 48.0),  // 32x48
-        (9, 12.0, 12.0),  // Unknown font defaults to font 1 (8x12)
+        (1, 12.0, 12.0), // 8x12, equal mult → Width == Height
+        (2, 16.0, 16.0), // 10x16
+        (3, 20.0, 20.0), // 12x20
+        (4, 24.0, 24.0), // 14x24
+        (5, 48.0, 48.0), // 32x48
+        (9, 12.0, 12.0), // Unknown font defaults to font 1 (8x12)
     ];
 
     for (font_num, expected_width, expected_height) in tests {
