@@ -12,13 +12,13 @@ readme = "README.md"
 
 [dependencies]
 image = "0.25"
-imageproc = "0.25"
+imageproc = "0.26"
 ab_glyph = "0.2"
 clap = { version = "4", features = ["derive"] }
-axum = "0.7"
+axum = "0.8"
 tokio = { version = "1", features = ["full"] }
 thiserror = "2"
-lopdf = "0.34"
+lopdf = "0.40"
 flate2 = "1"
 base64 = "0.22"
 datamatrix = "0.3"
@@ -30,5 +30,5 @@ serde = { version = "1", features = ["derive"] }
 
 [dev-dependencies]
 proptest = "1"
-reqwest = { version = "0.12", features = ["blocking"] }
+reqwest = { version = "0.13", features = ["blocking"] }
 sha2 = "0.10"
