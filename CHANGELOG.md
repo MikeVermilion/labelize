@@ -41,6 +41,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added timeout configuration in CI workflows
 
+## [0.2.1] - 2026-03-25
+
+### Changed
+
+- Excluded `testdata/`, `docs/`, `examples/`, and CI/IDE config from published crate — reduced crate size from ~18MB to ~508KB
+
 ## [0.2.0] - 2026-03-25
 
 ### Added
