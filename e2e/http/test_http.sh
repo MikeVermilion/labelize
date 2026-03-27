@@ -6,7 +6,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 TESTDATA_DIR="$SCRIPT_DIR/../testdata"
-OUTPUT_DIR="$SCRIPT_DIR/../http-outputs"
+OUTPUT_DIR="$SCRIPT_DIR/../http-output"
 WORK_DIR="$(mktemp -d)"
 trap 'cleanup' EXIT
 

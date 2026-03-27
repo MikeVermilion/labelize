@@ -3,6 +3,6 @@
 *.swo
 .DS_Store
 .qoder
-e2e/cli-outputs/
-e2e/http-outputs/
-e2e/sdk/output/
+e2e/cli-output/
+e2e/http-output/
+e2e/sdk-output/

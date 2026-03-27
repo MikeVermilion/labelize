@@ -6,7 +6,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 TESTDATA_DIR="$SCRIPT_DIR/../testdata"
-OUTPUT_DIR="$SCRIPT_DIR/../cli-outputs"
+OUTPUT_DIR="$SCRIPT_DIR/../cli-output"
 WORK_DIR="$(mktemp -d)"
 trap 'rm -rf "$WORK_DIR"' EXIT
 
@@ -45,8 +45,8 @@ assert_file_header() {
   local desc="$1" file="$2" expected_hex="$3"
   local actual_hex
   actual_hex=$(xxd -p -l "${#expected_hex}" "$file" | tr -d '\n' | head -c "${#expected_hex}")
-  # Compare case-insensitively
-  if [[ "${actual_hex,,}" == "${expected_hex,,}" ]]; then
+  # Compare case-insensitively (compatible with Bash 3)
+  if [[ "$(echo "$actual_hex" | tr '[:upper:]' '[:lower:]')" == "$(echo "$expected_hex" | tr '[:upper:]' '[:lower:]')" ]]; then
     echo "  ✓ $desc"
     pass=$((pass + 1))
   else

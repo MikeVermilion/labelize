@@ -12,7 +12,7 @@ const SAMPLE_ZPL: &[u8] = b"^XA\
 ^FO50,310^A0N,30,30^FDTest Label^FS\
 ^XZ";
 
-const OUTPUT_DIR: &str = "output";
+const OUTPUT_DIR: &str = "../sdk-output";
 
 fn default_options() -> DrawerOptions {
     DrawerOptions {
