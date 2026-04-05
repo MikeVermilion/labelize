@@ -1,4 +1,5 @@
 pub mod monochrome;
+#[cfg(feature = "pdf")]
 pub mod pdf;
 pub mod reverse_print;
 pub mod scaled;

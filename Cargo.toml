@@ -21,15 +21,20 @@ exclude = [
     "AGENTS.md",
 ]
 
+[features]
+default = ["native-app", "pdf"]
+native-app = ["dep:clap", "dep:axum", "dep:tokio"]
+pdf = ["dep:lopdf"]
+
 [dependencies]
 image = "0.25"
 imageproc = "0.26"
 ab_glyph = "0.2"
-clap = { version = "4", features = ["derive"] }
-axum = "0.8"
-tokio = { version = "1", features = ["full"] }
+clap = { version = "4", features = ["derive"], optional = true }
+axum = { version = "0.8", optional = true }
+tokio = { version = "1", features = ["full"], optional = true }
 thiserror = "2"
-lopdf = "0.40"
+lopdf = { version = "0.40", optional = true }
 flate2 = "1"
 base64 = "0.22"
 datamatrix = "0.3"
@@ -42,3 +47,8 @@ serde = { version = "1", features = ["derive"] }
 proptest = "1"
 reqwest = { version = "0.13", features = ["blocking"] }
 sha2 = "0.10"
+
+[[bin]]
+name = "labelize"
+path = "src/main.rs"
+required-features = ["native-app"]

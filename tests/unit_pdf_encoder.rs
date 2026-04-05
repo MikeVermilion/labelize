@@ -1,3 +1,5 @@
+#![cfg(feature = "pdf")]
+
 use image::{Rgba, RgbaImage};
 use labelize::encode_pdf;
 use labelize::DrawerOptions;
