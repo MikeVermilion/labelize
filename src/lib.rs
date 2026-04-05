@@ -7,6 +7,8 @@ pub mod error;
 pub mod hex;
 pub mod images;
 pub mod parsers;
+#[cfg(all(feature = "wasm-bindings", target_arch = "wasm32"))]
+pub mod wasm;
 
 pub use drawers::renderer::Renderer;
 pub use elements::drawer_options::DrawerOptions;

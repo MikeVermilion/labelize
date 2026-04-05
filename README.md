@@ -124,6 +124,34 @@ renderer.draw_label_as_png(&labels[0], &mut buf, DrawerOptions::default()).unwra
 std::fs::write("output.png", buf.into_inner()).unwrap();
 ```
 
+## WebAssembly
+
+For browser-side PNG generation, build only the core library plus wasm bindings:
+
+```bash
+rustup target add wasm32-unknown-unknown
+cargo build --release --lib --target wasm32-unknown-unknown --no-default-features --features wasm-bindings
+wasm-bindgen --target web --out-dir pkg target/wasm32-unknown-unknown/release/labelize.wasm
+```
+
+The generated JS module exposes:
+
+```js
+import init, { render_zpl_to_png } from "./pkg/labelize.js";
+
+await init();
+
+const pngBytes = render_zpl_to_png(
+  "^XA^FO50,50^A0N,40,40^FDHello^FS^XZ",
+  101.625,
+  203.25,
+  8,
+  true
+);
+```
+
+`render_zpl_to_png(...)` returns a `Uint8Array` of PNG bytes in the browser.
+
 ## Supported ZPL & EPL Commands
 
 ### ZPL Commands

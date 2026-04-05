@@ -21,10 +21,14 @@ exclude = [
     "AGENTS.md",
 ]
 
+[lib]
+crate-type = ["rlib", "cdylib"]
+
 [features]
 default = ["native-app", "pdf"]
 native-app = ["dep:clap", "dep:axum", "dep:tokio"]
 pdf = ["dep:lopdf"]
+wasm-bindings = ["dep:wasm-bindgen"]
 
 [dependencies]
 image = "0.25"
@@ -42,6 +46,7 @@ qrcode = "0.14"
 rxing = { version = "0.8", default-features = false, features = ["encoding_rs"] }
 regex = "1"
 serde = { version = "1", features = ["derive"] }
+wasm-bindgen = { version = "=0.2.117", optional = true }
 
 [dev-dependencies]
 proptest = "1"
