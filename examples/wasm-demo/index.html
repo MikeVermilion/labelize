@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Labelize Wasm Demo</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f4f1e8;
+        --panel: #fffdf8;
+        --ink: #181512;
+        --muted: #6b6258;
+        --line: #d8cfbf;
+        --accent: #0f766e;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top right, rgba(15, 118, 110, 0.12), transparent 28%),
+          linear-gradient(180deg, #f8f5ec 0%, var(--bg) 100%);
+      }
+
+      main {
+        width: min(1120px, calc(100vw - 32px));
+        margin: 32px auto;
+        display: grid;
+        grid-template-columns: minmax(320px, 1.15fr) minmax(280px, 0.85fr);
+        gap: 24px;
+      }
+
+      .panel {
+        background: color-mix(in srgb, var(--panel) 92%, white 8%);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        box-shadow: 0 16px 50px rgba(24, 21, 18, 0.08);
+        overflow: hidden;
+      }
+
+      .section {
+        padding: 20px;
+      }
+
+      .section + .section {
+        border-top: 1px solid var(--line);
+      }
+
+      h1,
+      h2 {
+        margin: 0 0 10px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 4vw, 3rem);
+      }
+
+      h2 {
+        font-size: 1.1rem;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 360px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 16px;
+        resize: vertical;
+        font: 14px/1.45 "SFMono-Regular", Menlo, Consolas, monospace;
+        color: var(--ink);
+        background: #fffdfa;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      label {
+        display: grid;
+        gap: 6px;
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+
+      input,
+      select,
+      button {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 12px;
+        font: inherit;
+      }
+
+      input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        margin: 0;
+        accent-color: var(--accent);
+      }
+
+      .checkbox {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--ink);
+      }
+
+      button {
+        appearance: none;
+        cursor: pointer;
+        background: var(--accent);
+        color: white;
+        font-weight: 600;
+        border-color: transparent;
+      }
+
+      button:disabled {
+        cursor: wait;
+        opacity: 0.7;
+      }
+
+      .preview {
+        min-height: 640px;
+        display: grid;
+        place-items: center;
+        background:
+          linear-gradient(45deg, rgba(24, 21, 18, 0.03) 25%, transparent 25%, transparent 75%, rgba(24, 21, 18, 0.03) 75%),
+          linear-gradient(45deg, rgba(24, 21, 18, 0.03) 25%, transparent 25%, transparent 75%, rgba(24, 21, 18, 0.03) 75%);
+        background-position: 0 0, 16px 16px;
+        background-size: 32px 32px;
+      }
+
+      .preview img {
+        max-width: 100%;
+        max-height: 600px;
+        border: 1px solid var(--line);
+        background: white;
+        box-shadow: 0 14px 40px rgba(24, 21, 18, 0.12);
+      }
+
+      .status {
+        min-height: 1.25rem;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .status.error {
+        color: #b42318;
+      }
+
+      .toolbar {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .download {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      @media (max-width: 900px) {
+        main {
+          grid-template-columns: 1fr;
+        }
+
+        .preview {
+          min-height: 360px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="panel">
+        <div class="section">
+          <h1>Labelize Wasm Demo</h1>
+          <p>Render ZPL to PNG in the browser using the generated WebAssembly package.</p>
+        </div>
+        <div class="section">
+          <h2>ZPL</h2>
+          <textarea id="zpl-input">^XA
+^PW640
+^FO40,40^GB560,300,4^FS
+^FO70,80^A0N,48,40^FDLabelize WebAssembly Demo^FS
+^FO70,150^A0N,32,28^FDFrontend PNG rendering from ZPL^FS
+^FO70,210^BCN,80,Y,N,N^FD123456789012^FS
+^FO70,376^A0N,28,24^FDShip To:^FS
+^FO70,416^A0N,34,28^FDAda Lovelace^FS
+^FO70,461^A0N,28,24^FD42 Analytical Engine Way^FS
+^FO70,498^A0N,28,24^FDLondon, UK^FS
+^XZ</textarea>
+        </div>
+        <div class="section">
+          <h2>Options</h2>
+          <div class="controls">
+            <label>
+              Width (mm)
+              <input id="width-mm" type="number" step="0.001" value="101.625">
+            </label>
+            <label>
+              Height (mm)
+              <input id="height-mm" type="number" step="0.001" value="203.25">
+            </label>
+            <label>
+              Dots per mm
+              <input id="dpmm" type="number" step="1" value="8">
+            </label>
+            <label class="checkbox">
+              <input id="invert" type="checkbox" checked>
+              Enable inverted labels
+            </label>
+          </div>
+        </div>
+        <div class="section">
+          <div class="toolbar">
+            <button id="render-button" type="button">Render PNG</button>
+            <a id="download-link" class="download" hidden download="label.png">Download PNG</a>
+          </div>
+          <div id="status" class="status"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section">
+          <h2>Preview</h2>
+        </div>
+        <div class="section preview">
+          <img id="preview-image" alt="Rendered label preview">
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
