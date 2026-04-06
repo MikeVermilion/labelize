@@ -130,8 +130,7 @@ For browser-side PNG generation, build only the core library plus wasm bindings:
 
 ```bash
 rustup target add wasm32-unknown-unknown
-cargo build --release --lib --target wasm32-unknown-unknown --no-default-features --features wasm-bindings
-wasm-bindgen --target web --out-dir pkg target/wasm32-unknown-unknown/release/labelize.wasm
+./scripts/build-wasm.sh
 ```
 
 The generated JS module exposes:
@@ -151,6 +150,12 @@ const pngBytes = render_zpl_to_png(
 ```
 
 `render_zpl_to_png(...)` returns a `Uint8Array` of PNG bytes in the browser.
+
+There is also a minimal browser demo in `examples/wasm-demo/`. After generating `pkg/`, serve the repository root with any static file server and open `examples/wasm-demo/`.
+
+```bash
+python3 -m http.server 8000
+```
 
 ## Supported ZPL & EPL Commands
 
