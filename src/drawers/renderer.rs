@@ -19,7 +19,9 @@ use crate::images;
 use super::drawer_state::DrawerState;
 
 static FONT_HELVETICA: &[u8] = crate::assets::FONT_HELVETICA_BOLD;
+#[cfg(not(all(feature = "wasm-bindings", target_arch = "wasm32")))]
 static FONT_DEJAVU_MONO: &[u8] = crate::assets::FONT_DEJAVU_SANS_MONO;
+#[cfg(not(all(feature = "wasm-bindings", target_arch = "wasm32")))]
 static FONT_DEJAVU_BOLD: &[u8] = crate::assets::FONT_DEJAVU_SANS_MONO_BOLD;
 static FONT_GS: &[u8] = crate::assets::FONT_ZPL_GS;
 
@@ -115,7 +117,7 @@ impl Renderer {
                     }
                 }
             } else {
-                image::imageops::overlay(&mut final_canvas, &canvas, offset_x, 0);
+                overlay_at(&mut final_canvas, &canvas, offset_x as i32, 0);
             }
             canvas = final_canvas;
         }
@@ -571,12 +573,7 @@ impl Renderer {
         // Scale horizontally by module_width (^BY w parameter)
         let mw = bc.barcode.module_width.max(1) as u32;
         let scaled = if mw > 1 {
-            image::imageops::resize(
-                &img,
-                img.width() * mw,
-                img.height(),
-                image::imageops::FilterType::Nearest,
-            )
+            scale_image_x_nearest(&img, mw)
         } else {
             img
         };
@@ -639,6 +636,15 @@ impl Renderer {
 }
 
 fn get_ttf_font_data(name: &str) -> &'static [u8] {
+    #[cfg(all(feature = "wasm-bindings", target_arch = "wasm32"))]
+    {
+        return match name {
+            "GS" => FONT_GS,
+            _ => FONT_HELVETICA,
+        };
+    }
+
+    #[cfg(not(all(feature = "wasm-bindings", target_arch = "wasm32")))]
     match name {
         "0" => FONT_HELVETICA,
         "B" => FONT_DEJAVU_BOLD,
@@ -949,6 +955,22 @@ fn rotate_270(img: &RgbaImage) -> RgbaImage {
     out
 }
 
+fn scale_image_x_nearest(img: &RgbaImage, scale: u32) -> RgbaImage {
+    let scale = scale.max(1);
+    let (w, h) = (img.width(), img.height());
+    let mut out = RgbaImage::new(w * scale, h);
+    for y in 0..h {
+        for x in 0..w {
+            let pixel = *img.get_pixel(x, y);
+            let base_x = x * scale;
+            for sx in 0..scale {
+                out.put_pixel(base_x + sx, y, pixel);
+            }
+        }
+    }
+    out
+}
+
 /// Draw a rounded rectangle with border. ZPL corner rounding uses radius
 /// computed as (shorter_side/2) * (rounding/8).
 #[allow(clippy::too_many_arguments)]
@@ -1040,6 +1062,9 @@ fn draw_barcode_interpretation_line(
     line_above: bool,
     module_width: i32,
 ) {
+    #[cfg(all(feature = "wasm-bindings", target_arch = "wasm32"))]
+    let font_data = FONT_HELVETICA;
+    #[cfg(not(all(feature = "wasm-bindings", target_arch = "wasm32")))]
     let font_data = FONT_DEJAVU_MONO;
     let font = match ab_glyph::FontRef::try_from_slice(font_data) {
         Ok(f) => f,

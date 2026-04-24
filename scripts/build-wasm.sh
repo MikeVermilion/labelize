@@ -39,6 +39,8 @@ mkdir -p "${OUT_DIR}"
 echo "Generating JS bindings into ${OUT_DIR}..."
 wasm-bindgen \
   --target web \
+  --remove-name-section \
+  --remove-producers-section \
   --out-dir "${OUT_DIR}" \
   "${WASM_PATH}"
 

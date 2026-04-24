@@ -157,6 +157,8 @@ There is also a minimal browser demo in `examples/wasm-demo/`. After generating 
 python3 -m http.server 8000
 ```
 
+http://localhost:8000/examples/wasm-demo/
+
 ## Supported ZPL & EPL Commands
 
 ### ZPL Commands
