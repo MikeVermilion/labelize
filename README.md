@@ -136,9 +136,9 @@ rustup target add wasm32-unknown-unknown
 The generated JS module exposes:
 
 ```js
-import init, { render_zpl_to_png } from "./pkg/labelize.js";
+import initLabelize, { render_zpl_to_png } from "./pkg/labelize.js";
 
-await init();
+await initLabelize();
 
 const pngBytes = render_zpl_to_png(
   "^XA^FO50,50^A0N,40,40^FDHello^FS^XZ",

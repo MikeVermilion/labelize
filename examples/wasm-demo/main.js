@@ -1,4 +1,4 @@
-import init, { render_zpl_to_png } from "../../pkg/labelize.js";
+import initLabelize, { render_zpl_to_png } from "../../pkg/labelize.js";
 
 const elements = {
   zpl: document.querySelector("#zpl-input"),
@@ -58,7 +58,7 @@ async function render() {
   }
 }
 
-await init();
+await initLabelize();
 elements.renderButton.addEventListener("click", render);
 window.addEventListener("beforeunload", revokeActiveUrl);
 
